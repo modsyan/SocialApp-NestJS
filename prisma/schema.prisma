@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "./src/generated/client"
 }
 
 datasource db {
@@ -13,15 +12,16 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
+  username  String
   firstName String
-  LastName  String?
+  lastName  String?
   email     String
   password  String
   createAt  DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
-model Bookmark {
+model Post {
   id          Int      @id @default(autoincrement())
   title       String
   description String
@@ -29,3 +29,10 @@ model Bookmark {
   createAt    DateTime @default(now())
   updatedAt   DateTime @default(now())
 }
+
+model comment {
+  id     Int @id @default(autoincrement())
+  userId Int
+  postId Int
+}
+
