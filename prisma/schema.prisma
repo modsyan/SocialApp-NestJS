@@ -11,28 +11,63 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String
-  firstName String
-  lastName  String?
-  email     String
+  id        String   @id @default(cuid())
+  username  String   @db.VarChar(20)
+  firstName String   @db.VarChar(100)
+  lastName  String   @db.VarChar(100)
+  email     String   @unique()
   password  String
-  createAt  DateTime @default(now())
+  bio       String?  @db.VarChar(255)
+  post      Post[]
+  // friends        User[]   @relation("FriendRelation")
+  // friendsReuests User[]   @relation("FriendRequestRelation")
+  // blockList      User[]   @relation("BlockListRelation")
+  createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  link        String
-  createAt    DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  id        String    @id @default(cuid())
+  content   String    @db.VarChar(255)
+  img_urls  String[]
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  comment   Comment[]
+  like      Like[]
+  Tags      Tag[]
+  published Boolean   @default(true)
+  createAt  DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+
+  @@map("Posts")
 }
 
-model comment {
-  id     Int @id @default(autoincrement())
-  userId Int
-  postId Int
+model Comment {
+  id       String   @id @default(cuid())
+  userId   String
+  postId   String
+  post     Post     @relation(fields: [postId], references: [id])
+  content  String
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now())
 }
 
+model Like {
+  id       String   @id @default(cuid())
+  uesrId   String
+  postId   String
+  Post     Post     @relation(fields: [postId], references: [id])
+  createAt DateTime @default(now())
+}
+
+model Tag {
+  id      String   @id @default(cuid())
+  postsId String[]
+  posts   Post[]
+  name    String
+}
+
+enum Role {
+  USER
+  ADMIN
+}
